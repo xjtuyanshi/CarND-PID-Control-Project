@@ -5,6 +5,10 @@
 #include "json.hpp"
 #include "PID.h"
 
+// for portability of M_PI (Vis Studio, MinGW, etc.)
+#ifndef M_PI
+const double M_PI = 3.14159265358979323846;
+#endif
 // for convenience
 using nlohmann::json;
 using std::string;
@@ -94,7 +98,7 @@ int main() {
   });
 
   int port = 4567;
-  if (h.listen(port)) {
+  if (h.listen("127.0.0.1",port)) {
     std::cout << "Listening to port " << port << std::endl;
   } else {
     std::cerr << "Failed to listen to port" << std::endl;
