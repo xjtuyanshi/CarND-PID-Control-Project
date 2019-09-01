@@ -19,7 +19,7 @@ Self-Driving Car Engineer Nanodegree Program
    * I imitated the python code algorithm and rewrite it in C++
    * Added a few conditions to make it better works in the simulation enviroment
    *  if cte > 5 , which means the car is out of lane, should rerun simulation
-   *  if time steps (no of h messages) > 8000 ( about one lap), restart simulation for another iteraton
+   *  if time steps (no of h messages) > 8000 ( about one lap), restart simulation for another iteration
    *  However, it seems my implementation doesn't work well. first of all, it takes much longer time to run more iterations in simulator.
    * Besides, PID values are not moving in the right directions and  stay at a range then do not change anymore.
    * Due to limited time, I am not be able to figure out the reason and will revisit this after finishing the final project.
@@ -31,6 +31,12 @@ Self-Driving Car Engineer Nanodegree Program
  Below is a short GIF shows the animation after using twiddle for 14 iterations(Failed).
  
  ![Twiddle][image1]
+ 
+## Reflections 
+Describe the effect each of the P, I, D components had in my implementation.
+1. P (proportional) tries to stter car to the center to minimize cte. However, it easily make the car overshots center of lane and could run out of lane.
+2. I(Intergral) treis to reduce the bias of car control system (like steering drift) accumulated over time. In the simulator, it seems there is no bias.
+3. D(Differential) helps reduce the effect of overshoot created by P, so the car's steering will not oscillate much when only P is added. 
 ## Project Dependencies
 
 * cmake >= 3.5
