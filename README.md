@@ -8,7 +8,7 @@ Self-Driving Car Engineer Nanodegree Program
 
 ---
 ## Implementations
-1. Rewrite python code from classroom to C++ :) 
+1. Rewrite python code from classroom to C++.:) 
    * `Init()` initialize P, I, D parameters (PID.cpp line 14-25)
    * `UpdateError()`, based on PID error calculation formula, get error for each parameters(PID.cpp line 27-35)
    * `GetSteerValue()`, output steer values (PID.cpp line 46-58)
@@ -16,8 +16,8 @@ Self-Driving Car Engineer Nanodegree Program
    * Adjust values by modify P, all others to 0; then P,I; then PID.
    * it looks like P= .2, I = 1e-4, D = 3.0 let the car finish the full lap
 3. Using Twiddle Algorithm to Tune PID Paramters
-   * Imitated the python code algorithm and rewrite it in C++
-   * Add a few condition to make it better work in the simulation enviroment
+   * I imitated the python code algorithm and rewrite it in C++
+   * Added a few conditions to make it better works in the simulation enviroment
    *  if cte > 5 , which means the car is out of lane, should rerun simulation
    *  if time steps (no of h messages) > 8000 ( about one lap), restart simulation for another iteraton
    *  However, it seems my implementation doesn't work well. first of all, it takes much longer time to run more iterations in simulator.
