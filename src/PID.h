@@ -1,6 +1,7 @@
 #ifndef PID_H
 #define PID_H
-
+#include <uWS/uWS.h>
+using namespace std;
 class PID {
  public:
   /**
@@ -31,6 +32,20 @@ class PID {
    */
   double TotalError();
 
+  /**
+   * Restart the simulator so twiddle can test different pid values
+   */
+  void RestartSimulator(uWS::WebSocket<uWS::SERVER> ws);
+
+  /**
+   * Set WS in PID so twiddle function can restart Websocket
+   */
+  void SetWS(uWS::WebSocket<uWS::SERVER> ws);
+  /**
+   * Twiddle Function
+   */
+  void Twiddle();
+  /*void SetPIDPar(double twiddle_p[3]);*/
  private:
   /**
    * PID Errors
@@ -45,6 +60,32 @@ class PID {
   double Kp;
   double Ki;
   double Kd;
+
+  // previous cte 
+  double prev_cte;
+
+  // ------following variables is for twiddle------
+  //websocket
+  uWS::WebSocket<uWS::SERVER> webSocket;
+  //dp intial values
+  double dp[3] = {1,1,1};
+  //p intial values
+  double p[3] = {0,0,0};
+  //best values
+  double best_p[3];
+
+  int max_iter = 1000;// max iteration for each test
+  int iter = 0; //iteration index
+  int start_error_collection = 200; // after n conmunications with simulator -start to get error 
+  int end_error_collection= 1000; // after n conmunications with simulator - end  getting error -twiddle start
+  int index_collection = 0; // index of error collection steps
+  double err_for_twiddle = 0;
+  double best_err;
+  int index_PID_par = 0;
+  bool par_test_run = true; // flag for if this is test run before (if err < best_err else ...etc)
+  bool flag_after_worse_run = false; 
+
+  bool stop_twiddle = false;
 };
 
 #endif  // PID_H

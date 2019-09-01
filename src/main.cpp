@@ -5,6 +5,8 @@
 #include "json.hpp"
 #include "PID.h"
 
+
+bool twiddle_on = false;
 // for portability of M_PI (Vis Studio, MinGW, etc.)
 #ifndef M_PI
 const double M_PI = 3.14159265358979323846;
@@ -35,18 +37,28 @@ string hasData(string s) {
 }
 
 int main() {
-  uWS::Hub h;
-
+  
   PID pid;
+  uWS::Hub h;
   /**
    * TODO: Initialize the pid variable.
    */
+  //test
+
+  if (twiddle_on) {
+	  pid.Init(0, 0, 0);
+  }
+  else {
+	  pid.Init(.2, .0001, 3.0);
+	  //pid.Init(1.94539, .0001, 2.73747);
+  }
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
+	pid.SetWS(ws);
     if (length && length > 2 && data[0] == '4' && data[1] == '2') {
       auto s = hasData(string(data).substr(0, length));
 
@@ -60,23 +72,23 @@ int main() {
           double cte = std::stod(j[1]["cte"].get<string>());
           double speed = std::stod(j[1]["speed"].get<string>());
           double angle = std::stod(j[1]["steering_angle"].get<string>());
-          double steer_value;
-          /**
-           * TODO: Calculate steering value here, remember the steering value is
-           *   [-1, 1].
-           * NOTE: Feel free to play around with the throttle and speed.
-           *   Maybe use another PID controller to control the speed!
-           */
-          
+       
+		  if (twiddle_on) {
+			  pid.Twiddle();
+		  }
+		  
+
+		  pid.UpdateError(cte);
+		  double steer_value = pid.TotalError();
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
-                    << std::endl;
+         /* std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
+                    << std::endl;*/
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.3;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+          /*std::cout << msg << std::endl;*/
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if
       } else {
@@ -88,7 +100,9 @@ int main() {
   }); // end h.onMessage
 
   h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req) {
+	
     std::cout << "Connected!!!" << std::endl;
+	
   });
 
   h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, 
