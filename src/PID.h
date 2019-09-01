@@ -30,10 +30,20 @@ class PID {
    * Calculate the total PID error.
    * @output The total PID error
    */
-  double TotalError();
+  double TotalError(double cte);
 
   /**
-   * Restart the simulator so twiddle can test different pid values
+   * get steering value to control the car.
+   * @output steering value [-1,1]
+   */
+  double GetSteerValue();
+  /**
+   * Reset errors for next iter
+   */
+  void ResetParameters();
+
+  /**
+   * Restart the simulator so twiddle can rerun simulation
    */
   void RestartSimulator(uWS::WebSocket<uWS::SERVER> ws);
 
@@ -76,16 +86,19 @@ class PID {
 
   int max_iter = 1000;// max iteration for each test
   int iter = 0; //iteration index
-  int start_error_collection = 200; // after n conmunications with simulator -start to get error 
-  int end_error_collection= 1000; // after n conmunications with simulator - end  getting error -twiddle start
-  int index_collection = 0; // index of error collection steps
-  double err_for_twiddle = 0;
-  double best_err;
+ 
+  
+ 
+  double total_error = 0; //accumlated error
+  double best_err = 9999999;
   int index_PID_par = 0;
   bool par_test_run = true; // flag for if this is test run before (if err < best_err else ...etc)
   bool flag_after_worse_run = false; 
-
   bool stop_twiddle = false;
+public:
+  int index_collection = 0; // index of error collection steps
+   //int start_error_collection = 100; // after n conmunications with simulator -start to get error 
+  //int end_error_collection = 300; // after n conmunications with simulator - end  getting error -twiddle start (min)
 };
 
 #endif  // PID_H

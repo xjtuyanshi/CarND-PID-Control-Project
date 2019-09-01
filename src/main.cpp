@@ -5,8 +5,10 @@
 #include "json.hpp"
 #include "PID.h"
 
-
+//===== TURN ON/OFF TWIDDLE PARAMETERS TUNE============
 bool twiddle_on = false;
+
+
 // for portability of M_PI (Vis Studio, MinGW, etc.)
 #ifndef M_PI
 const double M_PI = 3.14159265358979323846;
@@ -46,10 +48,10 @@ int main() {
   //test
 
   if (twiddle_on) {
-	  pid.Init(0, 0, 0);
+	  pid.Init(0.0, 0.0, 0.0);
   }
   else {
-	  pid.Init(.2, .0001, 3.0);
+	  pid.Init(0.2, 0.0001, 3.0);
 	  //pid.Init(1.94539, .0001, 2.73747);
   }
 
@@ -58,7 +60,7 @@ int main() {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
-	pid.SetWS(ws);
+
     if (length && length > 2 && data[0] == '4' && data[1] == '2') {
       auto s = hasData(string(data).substr(0, length));
 
@@ -74,12 +76,24 @@ int main() {
           double angle = std::stod(j[1]["steering_angle"].get<string>());
        
 		  if (twiddle_on) {
-			  pid.Twiddle();
+			  pid.index_collection++;
+			  // (pid.index_collection >= 100 && abs(cte) > 5.0 ---> if running time stpes > 100 and the car is out
+			  //of lane rerun simulation
+			  // or wait for 8000 time steps( It should be one lap's time step when driving at 30MPH ?)
+			  if ((pid.index_collection >= 100 && abs(cte) > 5.0) || pid.index_collection >=8000) {
+				  pid.Twiddle();
+				  pid.RestartSimulator(ws);
+
+			  }
+			 
 		  }
 		  
-
+		  
 		  pid.UpdateError(cte);
-		  double steer_value = pid.TotalError();
+		  pid.TotalError(cte);
+		  //pid.index_collection++;
+		  //cout << "PID index collection" << pid.index_collection << endl;
+		  double steer_value = pid.GetSteerValue();
           // DEBUG
          /* std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
                     << std::endl;*/
