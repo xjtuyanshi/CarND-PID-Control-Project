@@ -27,6 +27,7 @@ Self-Driving Car Engineer Nanodegree Program
  Below is a short GIF shows the animation after using manual tuned PID parameters.
  
  ![Manual Tuned PID results][image2]
+ 
  Below is a short GIF shows the animation after using twiddle for 14 iterations(Failed).
  
  ![Twiddle][image1]
