@@ -34,7 +34,7 @@ Self-Driving Car Engineer Nanodegree Program
  
 ## Reflections 
 Describe the effect each of the P, I, D components had in my implementation.
-1. P (proportional) tries to stter car to the center to minimize cte. However, it easily make the car overshots center of lane and could run out of lane.
+1. P (proportional) tries to stter car to the center to minimize cte. However, it easily make the car overshot center of lane and could run out of lane.
 2. I(Intergral) treis to reduce the bias of car control system (like steering drift) accumulated over time. In the simulator, it seems there is no bias.
 3. D(Differential) helps reduce the effect of overshoot created by P, so the car's steering will not oscillate much when only P is added. 
 ## Project Dependencies
